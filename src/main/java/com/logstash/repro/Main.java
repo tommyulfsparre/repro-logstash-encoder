@@ -25,7 +25,7 @@ public final class Main {
     SLF4JBridgeHandler.install();
     Logging.configureLogstashEncoderDefaults();
 
-    var rateLimiter = RateLimiter.create(100);
+    var rateLimiter = RateLimiter.create(10);
     var stop = new AtomicBoolean(false);
 
     Runtime.getRuntime()
@@ -36,9 +36,16 @@ public final class Main {
                   stop.set(true);
                 }));
 
+    var threadLocalHolder = new ThreadLocalHolder();
+
     while (!stop.get()) {
       if (rateLimiter.tryAcquire()) {
-        commonPool().execute(() -> logger.info("log!"));
+        commonPool()
+            .execute(
+                () -> {
+                  var cnt = threadLocalHolder.acquire();
+                  System.out.println("Count: " + cnt);
+                });
       }
     }
   }
