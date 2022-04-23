@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadLocalHolder {
 
-  private static AtomicInteger counter = new AtomicInteger();
+  private static final AtomicInteger counter = new AtomicInteger();
 
   private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(this::initializeThread);
 
